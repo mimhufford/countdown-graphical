@@ -60,7 +60,7 @@ main :: () {
             if it.key_code == .ARROW_DOWN  countdown -= 10;
         }
 
-        clear_render_target(0, 0, 0, 1);
+        clear_render_target(0.1, 0.1, 0.1, 1);
         set_shader_for_color();
 
         update_particles :: (particles: []Particle, digit: int, column: int) #expand {
