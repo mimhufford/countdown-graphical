@@ -3,11 +3,11 @@ main :: () {
     width :: 96*5 + margin*2;
     height :: 128 + margin*2;
 
-    particles_m1 : [..]Particle;
-    particles_m2 : [..]Particle;
-    particles_co : [..]Particle;
-    particles_s1 : [..]Particle;
-    particles_s2 : [..]Particle;
+    particles_m1 : [500]Particle;
+    particles_m2 : [500]Particle;
+    particles_co : [500]Particle;
+    particles_s1 : [500]Particle;
+    particles_s2 : [500]Particle;
 
     digits : [11]Bitmap;
     bitmap_load_from_memory(*digits[ 0], image_0_data);
@@ -60,50 +60,40 @@ main :: () {
             if it.key_code == .ARROW_DOWN  countdown -= 10;
         }
 
-        spawn_particles :: (particles: *[..]Particle, digit: int, column: int) #expand {
-            while particles.count < 500 {
-                p := array_add(particles);
-                while true {
-                    p.x = random_get_zero_to_one() * (digits[digit].width - 1);
-                    p.y = random_get_zero_to_one() * (digits[digit].height - 1);
-                    index := (cast(int)p.y * digits[digit].width + cast(int)p.x) * get_image_bytes_per_texel(digits[digit].format);
-                    if digits[digit].data[index] > 0 break;
-                }
-                p.y = digits[digit].height - p.y + margin;
-                p.x += 96*column + margin;
-                p.radius = random_get_within_range(3, 6);
-                p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
-                if countdown <= 1 { p.colour.y = p.colour.x; p.colour.z = p.colour.x; }
-                p.life = random_get_within_range(1, 2);
-            }
-        }
-
-        spawn_particles(*particles_m1, m1, 0);
-        spawn_particles(*particles_m2, m2, 1);
-        spawn_particles(*particles_co, 10, 2);
-        spawn_particles(*particles_s1, s1, 3);
-        spawn_particles(*particles_s2, s2, 4);
-
         clear_render_target(0, 0, 0, 1);
         set_shader_for_color();
 
-        update_particles :: (particles: *[..]Particle) #expand {
-            for * p: <<particles {
+        update_particles :: (particles: []Particle, digit: int, column: int) #expand {
+            for * p: particles {
+                if p.life <= 0 {
+                    while true {
+                        p.x = random_get_zero_to_one() * (digits[digit].width - 1);
+                        p.y = random_get_zero_to_one() * (digits[digit].height - 1);
+                        index := (cast(int)p.y * digits[digit].width + cast(int)p.x) * get_image_bytes_per_texel(digits[digit].format);
+                        if digits[digit].data[index] > 0 break;
+                    }
+                    p.y = digits[digit].height - p.y + margin;
+                    p.x += 96*column + margin;
+                    p.radius = random_get_within_range(3, 6);
+                    p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
+                    if countdown <= 1 { p.colour.y = p.colour.x; p.colour.z = p.colour.x; }
+                    p.life = random_get_within_range(1, 2);
+                }
+
                 jitter :: 2.0;
                 p.x += random_get_within_range(-jitter, jitter);
                 p.y += random_get_within_range(-jitter, jitter);
                 p.life -= dt*3;
                 p.radius -= dt*5;
-                if p.radius < 0.5 || p.life <= 0 remove p;
                 immediate_quad(p.x - p.radius, p.y - p.radius, p.x + p.radius, p.y + p.radius, p.colour);
             }
         }
 
-        update_particles(*particles_m1);
-        update_particles(*particles_m2);
-        update_particles(*particles_co);
-        update_particles(*particles_s1);
-        update_particles(*particles_s2);
+        update_particles(particles_m1, m1, 0);
+        update_particles(particles_m2, m2, 1);
+        update_particles(particles_co, 10, 2);
+        update_particles(particles_s1, s1, 3);
+        update_particles(particles_s2, s2, 4);
 
         swap_buffers(window);
         sleep_milliseconds(10);
