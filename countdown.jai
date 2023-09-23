@@ -1,5 +1,5 @@
 main :: () {
-    margin :: 50;
+    margin :: 75;
     width :: 96*5 + margin*2;
     height :: 128 + margin*2;
 
@@ -63,6 +63,8 @@ main :: () {
         clear_render_target(0.1, 0.1, 0.1, 1);
         set_shader_for_color();
 
+        mouse_x, mouse_y := get_mouse_pointer_position(window, true);
+
         update_particles :: (particles: []Particle, digit: int, column: int) #expand {
             for * p: particles {
                 if p.life <= 0 {
@@ -83,6 +85,14 @@ main :: () {
                 jitter :: 2.0;
                 p.x += random_get_within_range(-jitter, jitter);
                 p.y += random_get_within_range(-jitter, jitter);
+
+                dx := mouse_x - p.x;
+                dy := mouse_y - p.y;
+                if dx*dx + dy*dy < 400 {
+                    p.x -= dx;
+                    p.y -= dy;
+                }
+
                 p.life -= dt*3;
                 p.radius -= dt*5;
                 immediate_quad(p.x - p.radius, p.y - p.radius, p.x + p.radius, p.y + p.radius, p.colour);
