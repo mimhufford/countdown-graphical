@@ -1,0 +1,4 @@
+*.code-workspace
+*.exe
+*.pdb
+.build/
