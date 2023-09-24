@@ -1,5 +1,8 @@
 # Countdown
 
+## Demo
+https://github.com/mimhufford/countdown-graphical/assets/5212735/bbd1b7c9-65f2-40c2-b7f8-debe8cd98331
+
 ## Building
 ```
 jai countdown.jai
