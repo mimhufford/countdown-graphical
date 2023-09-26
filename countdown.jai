@@ -111,17 +111,17 @@ main :: () {
     }
 }
 
-image_0_data :: #run add_global_data(xx read_entire_file("0.png"), .READ_ONLY);
-image_1_data :: #run add_global_data(xx read_entire_file("1.png"), .READ_ONLY);
-image_2_data :: #run add_global_data(xx read_entire_file("2.png"), .READ_ONLY);
-image_3_data :: #run add_global_data(xx read_entire_file("3.png"), .READ_ONLY);
-image_4_data :: #run add_global_data(xx read_entire_file("4.png"), .READ_ONLY);
-image_5_data :: #run add_global_data(xx read_entire_file("5.png"), .READ_ONLY);
-image_6_data :: #run add_global_data(xx read_entire_file("6.png"), .READ_ONLY);
-image_7_data :: #run add_global_data(xx read_entire_file("7.png"), .READ_ONLY);
-image_8_data :: #run add_global_data(xx read_entire_file("8.png"), .READ_ONLY);
-image_9_data :: #run add_global_data(xx read_entire_file("9.png"), .READ_ONLY);
-image_c_data :: #run add_global_data(xx read_entire_file("c.png"), .READ_ONLY);
+image_0_data :: #run add_global_data(xx read_entire_file("images/0.png"), .READ_ONLY);
+image_1_data :: #run add_global_data(xx read_entire_file("images/1.png"), .READ_ONLY);
+image_2_data :: #run add_global_data(xx read_entire_file("images/2.png"), .READ_ONLY);
+image_3_data :: #run add_global_data(xx read_entire_file("images/3.png"), .READ_ONLY);
+image_4_data :: #run add_global_data(xx read_entire_file("images/4.png"), .READ_ONLY);
+image_5_data :: #run add_global_data(xx read_entire_file("images/5.png"), .READ_ONLY);
+image_6_data :: #run add_global_data(xx read_entire_file("images/6.png"), .READ_ONLY);
+image_7_data :: #run add_global_data(xx read_entire_file("images/7.png"), .READ_ONLY);
+image_8_data :: #run add_global_data(xx read_entire_file("images/8.png"), .READ_ONLY);
+image_9_data :: #run add_global_data(xx read_entire_file("images/9.png"), .READ_ONLY);
+image_c_data :: #run add_global_data(xx read_entire_file("images/c.png"), .READ_ONLY);
 
 Particle :: struct {
     x : float;
