@@ -6,6 +6,7 @@ particles_per_digit :: 500;
 particles : [5 * particles_per_digit]Particle;
 digits : [11]Bitmap;
 countdown := 180.0;
+end_effect := End_Effect.EXPLODE;
 window : Window_Type;
 dt : float;
 
@@ -52,6 +53,7 @@ main :: () {
 }
 
 update_and_render_particles_during_countdown :: () {
+    assert(countdown >= 0);
     minutes := cast(int)(countdown / 60);
     seconds := cast(int)(countdown - minutes * 60);
     m1, m2 := minutes / 10, minutes % 10;
@@ -103,6 +105,12 @@ update_and_render_particles_during_countdown :: () {
 }
 
 update_and_render_particles_after_time_is_up :: () {
+    if #complete end_effect == {
+        case .EXPLODE; update_and_render_explode_effect();
+    }
+}
+
+update_and_render_explode_effect :: () {
     for * p, index: particles {
         p.position += p.velocity * dt * 100;
 
@@ -114,7 +122,6 @@ update_and_render_particles_after_time_is_up :: () {
 
         p.radius = max(0.5, p.radius - dt);
 
-        // render the particle
         if p.radius <= 0.5 continue;
         render_particle(p);
     }
@@ -134,6 +141,10 @@ Particle :: struct {
     radius   : float;
     colour   : Vector4;
     life     : float;
+}
+
+End_Effect :: enum {
+    EXPLODE;
 }
 
 load_bitmaps :: () {
