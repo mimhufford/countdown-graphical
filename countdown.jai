@@ -3,11 +3,8 @@ main :: () {
     width :: 96*5 + margin*2;
     height :: 128 + margin*2;
 
-    particles_m1 : [500]Particle;
-    particles_m2 : [500]Particle;
-    particles_co : [500]Particle;
-    particles_s1 : [500]Particle;
-    particles_s2 : [500]Particle;
+    particles_per_digit :: 500;
+    particles : [5 * particles_per_digit]Particle;
 
     digits : [11]Bitmap;
     bitmap_load_from_memory(*digits[ 0], image_0_data);
@@ -65,8 +62,9 @@ main :: () {
 
         mouse_x, mouse_y := get_mouse_pointer_position(window, true);
 
-        update_particles :: (particles: []Particle, digit: int, column: int) #expand {
-            for * p: particles {
+        update_particles :: (first_index: int, digit: int, column: int) #expand {
+            for first_index..first_index + particles_per_digit-1 {
+                p := *particles[it];
                 if p.life <= 0 {
                     while true {
                         p.x = random_get_zero_to_one() * (digits[digit].width - 1);
@@ -99,11 +97,11 @@ main :: () {
             }
         }
 
-        update_particles(particles_m1, m1, 0);
-        update_particles(particles_m2, m2, 1);
-        update_particles(particles_co, 10, 2);
-        update_particles(particles_s1, s1, 3);
-        update_particles(particles_s2, s2, 4);
+        update_particles(particles_per_digit*0, m1, 0);
+        update_particles(particles_per_digit*1, m2, 1);
+        update_particles(particles_per_digit*2, 10, 2);
+        update_particles(particles_per_digit*3, s1, 3);
+        update_particles(particles_per_digit*4, s2, 4);
 
         swap_buffers(window);
         sleep_milliseconds(10);
