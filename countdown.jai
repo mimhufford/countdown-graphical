@@ -107,6 +107,7 @@ update_and_render_particles_during_countdown :: () {
 update_and_render_particles_after_time_is_up :: () {
     if #complete end_effect == {
         case .EXPLODE; update_and_render_explode_effect();
+        case .BOUNCE;  update_and_render_bounce_effect();
     }
 }
 
@@ -121,8 +122,21 @@ update_and_render_explode_effect :: () {
         p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
 
         p.radius = max(0.5, p.radius - dt);
-
         if p.radius <= 0.5 continue;
+
+        render_particle(p);
+    }
+}
+
+update_and_render_bounce_effect :: () {
+    for * p, index: particles {
+        p.velocity.y -= 5 * dt;
+        p.position += p.velocity * dt * 40;
+        if p.position.y < 0 p.velocity.y *= random_get_within_range(-1.0, -0.6);
+
+        p.radius = max(0.5, p.radius - dt * 0.7);
+        if p.radius <= 0.5 continue;
+
         render_particle(p);
     }
 }
@@ -145,6 +159,7 @@ Particle :: struct {
 
 End_Effect :: enum {
     EXPLODE;
+    BOUNCE;
 }
 
 load_bitmaps :: () {
