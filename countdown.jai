@@ -43,7 +43,8 @@ main :: () {
 
         clear_render_target(0.1, 0.1, 0.1, 1);
         set_shader_for_color();
-        update_and_render_particles_during_countdown();
+        if countdown update_and_render_particles_during_countdown();
+        else         update_and_render_particles_after_time_is_up();
         swap_buffers(window);
         sleep_milliseconds(10);
         reset_temporary_storage();
@@ -82,8 +83,10 @@ update_and_render_particles_during_countdown :: () {
         }
 
         jitter :: 2.0;
-        p.position.x += random_get_within_range(-jitter, jitter);
-        p.position.y += random_get_within_range(-jitter, jitter);
+        p.velocity.x = random_get_within_range(-jitter, jitter);
+        p.velocity.y = random_get_within_range(-jitter, jitter);
+
+        p.position += p.velocity;
 
         dx := mouse_x - p.position.x;
         dy := mouse_y - p.position.y;
@@ -95,13 +98,34 @@ update_and_render_particles_during_countdown :: () {
         p.life -= dt*3;
         p.radius -= dt*5;
 
-        // render the particle
-        left   := p.position.x - p.radius;
-        right  := p.position.x + p.radius;
-        top    := p.position.y + p.radius;
-        bottom := p.position.y - p.radius;
-        immediate_quad(left, bottom, right, top, p.colour);
+        render_particle(p);
     }
+}
+
+update_and_render_particles_after_time_is_up :: () {
+    for * p, index: particles {
+        p.position += p.velocity * dt * 100;
+
+        jitter :: 2.0;
+        p.position.x += random_get_within_range(-jitter, jitter);
+        p.position.y += random_get_within_range(-jitter, jitter);
+
+        p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
+
+        p.radius = max(0.5, p.radius - dt);
+
+        // render the particle
+        if p.radius <= 0.5 continue;
+        render_particle(p);
+    }
+}
+
+render_particle :: (using particle: *Particle) {
+    left   := position.x - radius;
+    right  := position.x + radius;
+    top    := position.y + radius;
+    bottom := position.y - radius;
+    immediate_quad(left, bottom, right, top, colour);
 }
 
 Particle :: struct {
