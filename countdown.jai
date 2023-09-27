@@ -80,7 +80,6 @@ update_and_render_particles_during_countdown :: () {
             p.position.x += 96*column + margin;
             p.radius = random_get_within_range(3, 6);
             p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
-            if countdown <= 1 { p.colour.y = p.colour.x; p.colour.z = p.colour.x; }
             p.life = random_get_within_range(1, 2);
         }
 
@@ -118,8 +117,6 @@ update_and_render_explode_effect :: () {
         jitter :: 2.0;
         p.position.x += random_get_within_range(-jitter, jitter);
         p.position.y += random_get_within_range(-jitter, jitter);
-
-        p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
 
         p.radius = max(0.5, p.radius - dt);
         if p.radius <= 0.5 continue;
