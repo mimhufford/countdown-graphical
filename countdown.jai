@@ -105,8 +105,9 @@ update_and_render_particles_during_countdown :: () {
 
 update_and_render_particles_after_time_is_up :: () {
     if #complete end_effect == {
-        case .EXPLODE; update_and_render_explode_effect();
-        case .BOUNCE;  update_and_render_bounce_effect();
+        case .EXPLODE;  update_and_render_explode_effect();
+        case .BOUNCE;   update_and_render_bounce_effect();
+        case .PLUGHOLE; update_and_render_plughole_effect();
     }
 }
 
@@ -138,6 +139,21 @@ update_and_render_bounce_effect :: () {
     }
 }
 
+update_and_render_plughole_effect :: () {
+    for * p, index: particles {
+        velocity := random_get_zero_to_one() * dt * 10;
+        p.velocity.x += ifx p.position.x <  width / 2 then velocity else -velocity;
+        p.velocity.y += ifx p.position.y < height / 2 then velocity else -velocity;
+
+        p.position += p.velocity * dt * 40;
+
+        p.radius = max(0.5, p.radius - dt * 0.7);
+        if p.radius <= 0.5 continue;
+
+        render_particle(p);
+    }
+}
+
 render_particle :: (using particle: *Particle) {
     left   := position.x - radius;
     right  := position.x + radius;
@@ -157,6 +173,7 @@ Particle :: struct {
 End_Effect :: enum {
     EXPLODE;
     BOUNCE;
+    PLUGHOLE;
 }
 
 load_bitmaps :: () {
