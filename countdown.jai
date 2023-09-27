@@ -105,9 +105,10 @@ update_and_render_particles_during_countdown :: () {
 
 update_and_render_particles_after_time_is_up :: () {
     if #complete end_effect == {
-        case .EXPLODE;  update_and_render_explode_effect();
-        case .BOUNCE;   update_and_render_bounce_effect();
-        case .PLUGHOLE; update_and_render_plughole_effect();
+        case .EXPLODE;     update_and_render_explode_effect();
+        case .BOUNCE;      update_and_render_bounce_effect();
+        case .PULL_CENTER; update_and_render_pull_center_effect();
+        case .PLUGHOLE;    update_and_render_plughole_effect();
     }
 }
 
@@ -149,7 +150,7 @@ update_and_render_bounce_effect :: () {
     if all_particles_dead then quit = true;
 }
 
-update_and_render_plughole_effect :: () {
+update_and_render_pull_center_effect :: () {
     all_particles_dead := true;
 
     for * p, index: particles {
@@ -164,6 +165,25 @@ update_and_render_plughole_effect :: () {
         if p.radius <= 0.5 continue;
         else all_particles_dead = false;
 
+        render_particle(p);
+    }
+
+    if all_particles_dead then quit = true;
+}
+
+update_and_render_plughole_effect :: () {
+    all_particles_dead := true;
+
+    for * p, index: particles {
+        p.velocity.y = width/2 - p.position.x;
+        p.velocity.x = p.position.y - height/2;
+        p.position += p.velocity * dt * random_get_within_range(1, 10);
+        gravity :: 70.0;
+        p.position.x += dt * ifx p.position.x < width/2  then gravity else -gravity;
+        p.position.y += dt * ifx p.position.y < height/2 then gravity else -gravity;
+        p.radius = max(0.5, p.radius - dt * 0.7);
+        if p.radius <= 0.5 continue;
+        else all_particles_dead = false;
         render_particle(p);
     }
 
@@ -189,6 +209,7 @@ Particle :: struct {
 End_Effect :: enum {
     EXPLODE;
     BOUNCE;
+    PULL_CENTER;
     PLUGHOLE;
 }
 
