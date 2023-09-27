@@ -9,6 +9,7 @@ countdown := 180.0;
 end_effect := End_Effect.EXPLODE;
 window : Window_Type;
 dt : float;
+quit := false;
 
 main :: () {
     load_bitmaps();
@@ -17,7 +18,6 @@ main :: () {
     
     last_time := current_time_monotonic();
 
-    quit := false;
     while !quit {
         update_window_events();
 
@@ -112,6 +112,8 @@ update_and_render_particles_after_time_is_up :: () {
 }
 
 update_and_render_explode_effect :: () {
+    all_particles_dead := true;
+
     for * p, index: particles {
         p.position += p.velocity * dt * 100;
 
@@ -121,12 +123,17 @@ update_and_render_explode_effect :: () {
 
         p.radius = max(0.5, p.radius - dt);
         if p.radius <= 0.5 continue;
+        else all_particles_dead = false;
 
         render_particle(p);
     }
+
+    if all_particles_dead then quit = true;
 }
 
 update_and_render_bounce_effect :: () {
+    all_particles_dead := true;
+
     for * p, index: particles {
         p.velocity.y -= 5 * dt;
         p.position += p.velocity * dt * 40;
@@ -134,24 +141,33 @@ update_and_render_bounce_effect :: () {
 
         p.radius = max(0.5, p.radius - dt * 0.7);
         if p.radius <= 0.5 continue;
+        else all_particles_dead = false;
 
         render_particle(p);
     }
+
+    if all_particles_dead then quit = true;
 }
 
 update_and_render_plughole_effect :: () {
+    all_particles_dead := true;
+
     for * p, index: particles {
-        velocity := random_get_zero_to_one() * dt * 10;
-        p.velocity.x += ifx p.position.x <  width / 2 then velocity else -velocity;
-        p.velocity.y += ifx p.position.y < height / 2 then velocity else -velocity;
+        velocity_x := random_get_zero_to_one() * dt * 10;
+        velocity_y := random_get_zero_to_one() * dt * 10;
+        p.velocity.x += ifx p.position.x <  width / 2 then velocity_x else -velocity_x;
+        p.velocity.y += ifx p.position.y < height / 2 then velocity_y else -velocity_y;
 
         p.position += p.velocity * dt * 40;
 
         p.radius = max(0.5, p.radius - dt * 0.7);
         if p.radius <= 0.5 continue;
+        else all_particles_dead = false;
 
         render_particle(p);
     }
+
+    if all_particles_dead then quit = true;
 }
 
 render_particle :: (using particle: *Particle) {
