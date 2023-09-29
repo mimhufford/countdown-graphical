@@ -181,10 +181,10 @@ update_and_render_pull_center_effect :: () {
 update_and_render_plughole_effect :: () {
     all_particles_dead := true;
 
-    velocity_multiplier := min(1.0, countup / 10.0);
+    velocity_multiplier := min(1.0, countup / 30.0);
 
     for * p, index: particles {
-        strength := random_get_within_range(1, 100);
+        strength := random_get_within_range(1, 300);
         p.velocity.y = width/2 - p.position.x;
         p.velocity.x = p.position.y - height/2;
         p.position += p.velocity * dt * velocity_multiplier * strength;
@@ -193,7 +193,7 @@ update_and_render_plughole_effect :: () {
         p.position.x += random_get_within_range(-jitter, jitter);
         p.position.y += random_get_within_range(-jitter, jitter);
 
-        gravity := velocity_multiplier * strength * 20;
+        gravity := velocity_multiplier * strength * 18;
         dx := p.position.x - width /2;
         dy := p.position.y - height/2;
         distance_from_centre_sq := dx*dx + dy*dy;
