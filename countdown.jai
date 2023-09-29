@@ -194,9 +194,12 @@ update_and_render_plughole_effect :: () {
         p.position.y += random_get_within_range(-jitter, jitter);
 
         gravity := velocity_multiplier * strength * 20;
-        p.position.x += dt * ifx p.position.x < width/2  then gravity else -gravity;
-        p.position.y += dt * ifx p.position.y < height/2 then gravity else -gravity;
-        p.radius = max(0.5, p.radius - dt * 2);
+        dx := p.position.x - width /2;
+        dy := p.position.y - height/2;
+        distance_from_centre_sq := dx*dx + dy*dy;
+        p.position.x += dt * ifx dx < 0 then gravity else -gravity;
+        p.position.y += dt * ifx dy < 0 then gravity else -gravity;
+        if distance_from_centre_sq < 80 p.radius = max(0.5, p.radius - dt * 8);
         if p.radius <= 0.5 continue;
         else all_particles_dead = false;
         render_particle(p);
