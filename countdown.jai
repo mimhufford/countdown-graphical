@@ -6,7 +6,8 @@ particles_per_digit :: 500;
 particles : [5 * particles_per_digit]Particle;
 digits : [11]Bitmap;
 countdown := 180.0;
-end_effect := End_Effect.EXPLODE;
+countup := 0.0;
+end_effect := End_Effect.PLUGHOLE;
 window : Window_Type;
 dt : float;
 quit := false;
@@ -39,7 +40,13 @@ main :: () {
             last_time = now;
 
             countdown -= dt;
-            countdown = max(countdown, 0);
+
+            if countdown <= 0 {
+                countdown = 0;
+                countup += dt;
+            } else {
+                countup = 0;
+            }
         }
 
         clear_render_target(0.1, 0.1, 0.1, 1);
@@ -174,14 +181,22 @@ update_and_render_pull_center_effect :: () {
 update_and_render_plughole_effect :: () {
     all_particles_dead := true;
 
+    velocity_multiplier := min(1.0, countup / 10.0);
+
     for * p, index: particles {
+        strength := random_get_within_range(1, 100);
         p.velocity.y = width/2 - p.position.x;
         p.velocity.x = p.position.y - height/2;
-        p.position += p.velocity * dt * random_get_within_range(1, 10);
-        gravity :: 70.0;
+        p.position += p.velocity * dt * velocity_multiplier * strength;
+
+        jitter :: 2.0;
+        p.position.x += random_get_within_range(-jitter, jitter);
+        p.position.y += random_get_within_range(-jitter, jitter);
+
+        gravity := velocity_multiplier * strength * 20;
         p.position.x += dt * ifx p.position.x < width/2  then gravity else -gravity;
         p.position.y += dt * ifx p.position.y < height/2 then gravity else -gravity;
-        p.radius = max(0.5, p.radius - dt * 0.7);
+        p.radius = max(0.5, p.radius - dt * 2);
         if p.radius <= 0.5 continue;
         else all_particles_dead = false;
         render_particle(p);
