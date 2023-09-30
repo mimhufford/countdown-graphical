@@ -181,25 +181,27 @@ update_and_render_pull_center_effect :: () {
 update_and_render_plughole_effect :: () {
     all_particles_dead := true;
 
-    velocity_multiplier := min(1.0, countup / 30.0);
+    speed := min(1.0, countup / 10);
 
     for * p, index: particles {
-        strength := random_get_within_range(1, 300);
-        p.velocity.y = width/2 - p.position.x;
-        p.velocity.x = p.position.y - height/2;
-        p.position += p.velocity * dt * velocity_multiplier * strength;
-
+        // spin
+        da := dt * random_get_within_range(0, 50) * speed;
+        x := p.position.x;
+        y := p.position.y;
+        p.position.x = cos(da) * (x-width/2) - sin(da) * (y-height/2) + width/2;
+        p.position.y = sin(da) * (x-width/2) + cos(da) * (y-height/2) + height/2;
+        // move toward center
+        move_factor := random_get_within_range(0, 2) * speed;
+        dx := p.position.x - width/2;
+        dy := p.position.y - height/2;
+        p.position.x -= dx * dt * move_factor;
+        p.position.y -= dy * dt * move_factor;
+        // jitter
         jitter :: 2.0;
         p.position.x += random_get_within_range(-jitter, jitter);
         p.position.y += random_get_within_range(-jitter, jitter);
-
-        gravity := velocity_multiplier * strength * 18;
-        dx := p.position.x - width /2;
-        dy := p.position.y - height/2;
-        distance_from_centre_sq := dx*dx + dy*dy;
-        p.position.x += dt * ifx dx < 0 then gravity else -gravity;
-        p.position.y += dt * ifx dy < 0 then gravity else -gravity;
-        if distance_from_centre_sq < 80 p.radius = max(0.5, p.radius - dt * 8);
+        // shrink
+        p.radius -= dt * speed;
         if p.radius <= 0.5 continue;
         else all_particles_dead = false;
         render_particle(p);
@@ -260,7 +262,7 @@ image_c_data :: #run add_global_data(xx read_entire_file("images/c.png"), .READ_
 #run {
     #if OS == .WINDOWS {
         #import "Windows_Resources";
-        disable_runtime_console();
+        // disable_runtime_console();
     }
 }
 
