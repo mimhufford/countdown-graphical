@@ -185,13 +185,13 @@ update_and_render_plughole_effect :: () {
 
     for * p, index: particles {
         // spin
-        da := dt * random_get_within_range(0, 50) * speed;
+        da := dt * random_get_within_range(0, 20) * speed;
         x := p.position.x;
         y := p.position.y;
         p.position.x = cos(da) * (x-width/2) - sin(da) * (y-height/2) + width/2;
         p.position.y = sin(da) * (x-width/2) + cos(da) * (y-height/2) + height/2;
         // move toward center
-        move_factor := random_get_within_range(0, 2) * speed;
+        move_factor := random_get_within_range(-1, 2) * speed;
         dx := p.position.x - width/2;
         dy := p.position.y - height/2;
         p.position.x -= dx * dt * move_factor;
@@ -201,7 +201,7 @@ update_and_render_plughole_effect :: () {
         p.position.x += random_get_within_range(-jitter, jitter);
         p.position.y += random_get_within_range(-jitter, jitter);
         // shrink
-        p.radius -= dt * speed;
+        p.radius -= dt * speed * 0.5;
         if p.radius <= 0.5 continue;
         else all_particles_dead = false;
         render_particle(p);
