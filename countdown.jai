@@ -262,7 +262,7 @@ image_c_data :: #run add_global_data(xx read_entire_file("images/c.png"), .READ_
 #run {
     #if OS == .WINDOWS {
         #import "Windows_Resources";
-        // disable_runtime_console();
+        disable_runtime_console();
     }
 }
 
