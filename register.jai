@@ -89,8 +89,8 @@ update_and_render_particles:: () {
 
         if p.life <= 0 {
             while true {
-                p.position.x = random_get_zero_to_one() * digit_width;
-                p.position.y = random_get_zero_to_one() * digit_height;
+                p.position.x = random_get_zero_to_one() * (digit_width-1);
+                p.position.y = random_get_zero_to_one() * (digit_height-1);
                 index := (cast(int)p.position.y * digit_width + cast(int)p.position.x) * get_image_bytes_per_texel(digits[digit].format);
                 if digits[digit].data[index] > 0 break;
             }
