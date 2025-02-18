@@ -9,6 +9,7 @@ code := s64.[0,0,0,0,0,0];
 window : Window_Type;
 dt : float;
 quit := false;
+code_index_to_update := 0;
 
 main :: () {
     load_bitmaps();
@@ -26,11 +27,13 @@ main :: () {
         update_window_events();
 
         for events_this_frame {
-            if it.type == .QUIT         quit = true;
-            if it.key_code == .ESCAPE   quit = true;
-            if it.type != .KEYBOARD     continue;
-            if it.key_pressed == 0      continue;
-            if it.repeat                continue;
+            if it.type == .QUIT          quit = true;
+            if it.key_code == .ESCAPE    quit = true;
+            if it.type != .KEYBOARD      continue;
+            if it.key_pressed == 0       continue;
+            if it.repeat                 continue;
+            if it.key_code == .BACKSPACE reset_code();
+            process_digit(it.key_code);
         }
 
         {
@@ -46,6 +49,19 @@ main :: () {
         sleep_milliseconds(10);
         reset_temporary_storage();
     }
+}
+
+reset_code :: () {
+    for * code it.* = 0;
+    code_index_to_update = 0;
+}
+
+process_digit :: (key: Key_Code) {
+    if key < #char "0" return;
+    if key > #char "9" return;
+    code[code_index_to_update] = cast(u8, key) - #char "0";
+    code_index_to_update += 1;
+    code_index_to_update %= code.count;
 }
 
 update_and_render_particles:: () {
