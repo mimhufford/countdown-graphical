@@ -4,7 +4,7 @@ height :: 128  + margin*2;
 particles_per_digit :: 500;
 
 particles : [6 * particles_per_digit]Particle;
-digits : [11]Bitmap;
+digits : [10]Bitmap;
 code := s64.[0,0,0,0,0,0];
 window : Window_Type;
 dt : float;
@@ -137,7 +137,6 @@ load_bitmaps :: () {
     bitmap_load_from_memory(*digits[ 7], image_7_data);
     bitmap_load_from_memory(*digits[ 8], image_8_data);
     bitmap_load_from_memory(*digits[ 9], image_9_data);
-    bitmap_load_from_memory(*digits[10], image_c_data);
 }
 
 image_0_data :: #run add_global_data(xx read_entire_file("images/0.png"), .READ_ONLY);
@@ -150,7 +149,6 @@ image_6_data :: #run add_global_data(xx read_entire_file("images/6.png"), .READ_
 image_7_data :: #run add_global_data(xx read_entire_file("images/7.png"), .READ_ONLY);
 image_8_data :: #run add_global_data(xx read_entire_file("images/8.png"), .READ_ONLY);
 image_9_data :: #run add_global_data(xx read_entire_file("images/9.png"), .READ_ONLY);
-image_c_data :: #run add_global_data(xx read_entire_file("images/c.png"), .READ_ONLY);
 
 #run {
     #if OS == .WINDOWS {
