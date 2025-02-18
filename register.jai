@@ -1,8 +1,7 @@
-margin :: 75;
-width  :: 96*6 + margin*2;
-height :: 128  + margin*2;
+SCALE  :: 45;
+width  := 15 * SCALE;
+height := 5 * SCALE;
 particles_per_digit :: 500;
-
 particles : [6 * particles_per_digit]Particle;
 digits : [10]Bitmap;
 code := s64.[0,0,0,0,0,0];
@@ -25,6 +24,13 @@ main :: () {
 
     while !quit {
         update_window_events();
+
+        for get_window_resizes() {
+            if it.window != window continue;
+            update_window(window);
+            width = it.width;
+            height = it.height;
+        }
 
         for events_this_frame {
             if it.type == .QUIT          quit = true;
@@ -65,6 +71,11 @@ process_digit :: (key: Key_Code) {
 }
 
 update_and_render_particles:: () {
+    digit_width := digits[0].width;
+    digit_height := digits[0].height;
+    code_width := digit_width * code.count;
+    left_padding := width / 2 - code_width / 2;
+    top_padding := height / 2 - digit_height / 2;
     mouse_x, mouse_y := get_mouse_pointer_position(window, true);
 
     for * p, index: particles {
@@ -78,13 +89,13 @@ update_and_render_particles:: () {
 
         if p.life <= 0 {
             while true {
-                p.position.x = random_get_zero_to_one() * (digits[digit].width - 1);
-                p.position.y = random_get_zero_to_one() * (digits[digit].height - 1);
-                index := (cast(int)p.position.y * digits[digit].width + cast(int)p.position.x) * get_image_bytes_per_texel(digits[digit].format);
+                p.position.x = random_get_zero_to_one() * digit_width;
+                p.position.y = random_get_zero_to_one() * digit_height;
+                index := (cast(int)p.position.y * digit_width + cast(int)p.position.x) * get_image_bytes_per_texel(digits[digit].format);
                 if digits[digit].data[index] > 0 break;
             }
-            p.position.y = digits[digit].height - p.position.y + margin;
-            p.position.x += 96*column + margin;
+            p.position.y = top_padding + digit_height - p.position.y;
+            p.position.x += left_padding + (digit_width * column);
             p.radius = random_get_within_range(3, 6);
             p.colour = .{random_get_zero_to_one(), random_get_zero_to_one(), random_get_zero_to_one(), 1};
             p.life = random_get_within_range(1, 2);
