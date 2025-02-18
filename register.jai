@@ -5,7 +5,7 @@ particles_per_digit :: 500;
 
 particles : [6 * particles_per_digit]Particle;
 digits : [11]Bitmap;
-code := s64.[8,9,8,7,0,6];
+code := s64.[0,0,0,0,0,0];
 window : Window_Type;
 dt : float;
 quit := false;
@@ -14,6 +14,11 @@ main :: () {
     load_bitmaps();
     window = create_window(width, height, "Register Code");
     set_render_target(window);
+
+    args := get_command_line_arguments();
+    if args.count > 1 && args[1].count == 6 {
+        for args[1] code[it_index] = it - #char "0";
+    }
     
     last_time := current_time_monotonic();
 
